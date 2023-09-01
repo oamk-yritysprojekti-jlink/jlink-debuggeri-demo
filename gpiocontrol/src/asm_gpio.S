@@ -69,7 +69,7 @@ write_gpio_lo:
     mov     r1, #1              // set bit in r1
     lsl     r1, r0              // shift to pin we want
 
-    str     r1, [r2, #0x00C]    // write gpio to low (led high);
+    str     r1, [r2, #0x00C]    // write gpio to low (led on);
 
     pop     {r1,r2}
     mov     pc, lr
