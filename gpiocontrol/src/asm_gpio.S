@@ -52,8 +52,8 @@ configure_gpio_out:
 
     ldr     r0, =GPIO_BASE      
     str     r1, [r0, r2]        // write to PIN_CNF[n]
-    pop     {r0-r2}
 
+    pop     {r0-r2}
     mov     pc, lr
 
 read_buttons:
@@ -71,7 +71,6 @@ write_gpio_lo:
 
     str     r1, [r2, #0x00C]    // write gpio to low (led high);
 
-
     pop     {r1,r2}
     mov     pc, lr
 
@@ -85,7 +84,6 @@ write_gpio_hi:
     lsl     r1, r0              // shift to pin we want
 
     str     r1, [r2, #0x008]    // write gpio to high (led off);
-
 
     pop     {r1,r2}
     mov     pc, lr

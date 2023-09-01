@@ -2,55 +2,44 @@
 #include <zephyr/drivers/gpio.h>
 #include <stdint.h>
 
-#define ever ;;
-
-#define SLEEP_TIME_MS 200
-
-#define LED0_NODE DT_ALIAS(led0)
-
-
 #define BITSET(x, n) ((x) |= 1UL << (n))
 #define BITCLR(x, n) ((x) |= ~(1UL << (n)))
 
-#define GPIO_BASE   (volatile uint32_t*)(0x40842500)
-#define CNF_OS(x)   (0x200 + (0x004 * (x)))
+#define N_LEDS 4
 
-#define OUTSET_OS   0x008
-#define OUTCLR_OS   0x00C
 
-#define DIRSET_OS   0x018
-#define DIRCLR_OS   0x01C
-
-extern void entry_asm();
 extern void configure_gpio_out(int);
 extern void write_gpio_lo(int);
 extern void write_gpio_hi(int);
 
+static int leds[N_LEDS] = {28,29,30,31};
+static bool led_state[N_LEDS] = {0,0,0,0};
+
+void toggleLed(int n){
+    if( (n >= N_LEDS) || (n < 0)) return;
+
+    if(led_state[n]){
+        write_gpio_hi(leds[n]); // turn off if on
+        led_state[n] = false;
+    }else{
+        write_gpio_lo(leds[n]); // turn on if off
+        led_state[n] = true;
+    }
+}
+
 int main(void){
-
-
-    printk("Calling asm\n");
+    printk("Configuring gpios asm\n");
     for (int i = 28; i <= 31; ++i){
         configure_gpio_out(i);
-        write_gpio_lo(i);
     }
 
-    printk("Back from calling asm\n");
-    k_msleep(2000);
+    for(;;){
 
-    printk("Calling asm again\n");
-    for (int i = 28; i <= 31; ++i){
-        write_gpio_hi(i);
+        for(int i = 0; i < 4; ++i){
+            toggleLed(i);
+            k_msleep(200);
+        }
     }
-    printk("Back from calling asm\n");
-
-    for(ever){
-
-        k_msleep(200);
-
-    }
-
-
 
     return 0;
 }
