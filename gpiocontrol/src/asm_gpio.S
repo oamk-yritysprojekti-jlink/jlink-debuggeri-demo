@@ -71,23 +71,15 @@ _start:
     bl      configure_gpio_in
 
 
-    
-
     readloop:
     mov     r0, #23
     bl      read_gpio
-    cmp     r0, #0              // pin pressed?
-    beq     light_led           // if yes light led
-                                
-    mov     r0, #28             // if no write gpio hi and read again
-    bl      write_gpio_hi
+    cmp     r0, #0              // button pressed?
+    mov     r0, #28             // load led1
+    beq     write_gpio_lo       // yes, light led
+    bl      write_gpio_hi       // no, turn led off
     bl      readloop            
 
-    light_led:
-    mov     r0, #28
-    bl      write_gpio_lo
-
-    bl      readloop 
 
     pop {r0-r5,pc}
 
@@ -157,10 +149,6 @@ read_gpio:
     pop     {r1-r3}
     mov     pc, lr
 
-read_buttons:
-
-    bx lr
-    
 
 /* r0 set to gpio # */
 write_gpio_lo:
@@ -188,6 +176,3 @@ write_gpio_hi:
 
     pop     {r1,r2}
     mov     pc, lr
-
-
-
